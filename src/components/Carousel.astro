@@ -1,5 +1,15 @@
 ---
-const { items } = Astro.props;
+interface CarouselItem {
+  label: string;
+  url: string;
+  src: string;
+}
+
+interface Props {
+  items: CarouselItem[];
+}
+
+const { items } = Astro.props as Props;
 ---
 
 {

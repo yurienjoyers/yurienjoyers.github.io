@@ -1,6 +1,20 @@
 ---
-const { groups = [], activePage = "" } = Astro.props;
-const sidebarGroups = groups;
+interface SidebarSection {
+    pageHref: string;
+    sectionLabel: string;
+}
+
+interface SidebarGroup {
+    groupLabel: string;
+    sections: SidebarSection[];
+}
+
+interface Props {
+    groups?: SidebarGroup[];
+    activePage?: string;
+}
+
+const { groups = [], activePage = "" } = Astro.props as Props;
 ---
 
 <aside class="sidebar" aria-label="Blog sidebar">
@@ -17,7 +31,7 @@ const sidebarGroups = groups;
     </a>
 
     {
-        sidebarGroups.map((group) => (
+        groups.map((group) => (
             <section class="group" aria-label={`${group.groupLabel} posts`}>
                 <p class="group-label">{group.groupLabel}</p>
                 <ul>

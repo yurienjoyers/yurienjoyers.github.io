@@ -1,13 +1,16 @@
+import { unified } from "@astrojs/markdown-remark";
 import { defineConfig } from "astro/config";
 import remarkBreaks from "remark-breaks";
 
 export default defineConfig({
   output: "static",
   markdown: {
-    remarkPlugins: [remarkBreaks],
+    processor: unified({
+      remarkPlugins: [remarkBreaks],
+    }),
   },
   build: {
-    format: "file",
+    format: "directory",
   },
   site: "https://yurienjoyers.github.io",
 });

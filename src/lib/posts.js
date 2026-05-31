@@ -16,12 +16,16 @@ function slugify(value) {
     .replace(/^-+|-+$/g, "");
 }
 
-function parsePostSlug(slug) {
-  const parts = slug.split("/").filter(Boolean);
+function parsePostId(id) {
+  if (typeof id !== "string" || id.length === 0) {
+    throw new Error("Post entry is missing id.");
+  }
+
+  const parts = id.split("/").filter(Boolean);
 
   if (parts.length !== 3) {
     throw new Error(
-      `Post entries must live at src/content/posts/<author>/<section>/<entry>.md. Received: ${slug}`,
+      `Post entries must live at src/content/posts/<author>/<section>/<entry>.md. Received id: ${id}`,
     );
   }
 
@@ -95,7 +99,7 @@ function sortPosts(left, right) {
 }
 
 function buildPostRecord(entry) {
-  const { author, section, entryName } = parsePostSlug(entry.slug);
+  const { author, section, entryName } = parsePostId(entry.id);
   const authorSlug = slugify(author);
   const sectionSlug = slugify(section);
   const date = normalizeDateString(entry.data.date);
@@ -112,7 +116,7 @@ function buildPostRecord(entry) {
     authorLabel: formatLabel(author),
     sectionSlug,
     sectionLabel: formatLabel(section),
-    pageHref: `/${authorSlug}/${sectionSlug}.html`,
+    pageHref: `/${authorSlug}/${sectionSlug}/`,
     flatSlug: [author, section, entryName].map(slugify).join("-"),
   };
 }
@@ -144,7 +148,7 @@ function discoverGroups() {
       sections.push({
         sectionSlug,
         sectionLabel: formatLabel(sectionEntry.name),
-        pageHref: `/${authorSlug}/${sectionSlug}.html`,
+        pageHref: `/${authorSlug}/${sectionSlug}/`,
       });
     }
 
