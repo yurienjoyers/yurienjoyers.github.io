@@ -1,10 +1,7 @@
 import { existsSync, readdirSync } from "node:fs";
-import { basename, extname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { basename, extname, join } from "node:path";
 
-const CAROUSEL_DIR = fileURLToPath(
-  new URL("../../public/carousel", import.meta.url),
-);
+const CAROUSEL_DIR = join(process.cwd(), "public", "carousel");
 
 function getCarouselUrl(filename) {
   return basename(filename, extname(filename)).replace(/[⁄∕／]/g, "/");
