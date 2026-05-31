@@ -210,6 +210,13 @@ a {
     color: var(--accent);
 }
 
+.article img {
+    display: block;
+    max-width: 100%;
+    max-height: 32rem;
+    margin: 0 auto;
+}
+
 .entries {
     display: grid;
     gap: 2rem;
