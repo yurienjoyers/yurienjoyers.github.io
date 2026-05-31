@@ -17,7 +17,7 @@ const documentTitle = "yurienjoyers";
         <ClientRouter />
     </head>
     <body>
-        <div class="layout">
+        <div class:list={["layout", { "layout--home": home }]}>
             <Sidebar groups={groups} activePage={activePage} />
 
             {

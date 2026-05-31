@@ -9,7 +9,15 @@ const { items } = Astro.props;
   ) : (
     <>
       <section class="home-stage" data-carousel-root data-carousel-items={JSON.stringify(items)}>
-        <p class="source-link" data-carousel-source>{items[0].label}</p>
+        <a
+          class="source-link"
+          data-carousel-source
+          href={items[0].url}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          {items[0].label}
+        </a>
         <div class="home-carousel">
           {items.map((item, index) => (
             <div
@@ -40,7 +48,7 @@ const { items } = Astro.props;
 
             const items = JSON.parse(root.getAttribute('data-carousel-items') || '[]');
             const slides = Array.from(root.querySelectorAll('[data-carousel-slide]'));
-            const sourceLabel = root.querySelector('[data-carousel-source]');
+            const sourceLink = root.querySelector('[data-carousel-source]');
 
             if (slides[0]) {
               slides.forEach((slide, index) => {
@@ -48,8 +56,9 @@ const { items } = Astro.props;
               });
             }
 
-            if (sourceLabel && items[0]) {
-              sourceLabel.textContent = items[0].label;
+            if (sourceLink && items[0]) {
+              sourceLink.textContent = items[0].label;
+              sourceLink.href = items[0].url;
             }
 
             if (items.length < 2 || slides.length < 2) {
@@ -63,7 +72,10 @@ const { items } = Astro.props;
               slides[index].classList.remove('active');
               index = nextIndex;
               slides[index].classList.add('active');
-              if (sourceLabel) sourceLabel.textContent = items[index].label;
+              if (sourceLink) {
+                sourceLink.textContent = items[index].label;
+                sourceLink.href = items[index].url;
+              }
             }
 
             const intervalId = window.setInterval(() => {

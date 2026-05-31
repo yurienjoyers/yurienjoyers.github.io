@@ -51,7 +51,7 @@ for (const post of currentPage.posts) {
                 class="entries"
                 aria-label={`${currentPage.sectionLabel} posts`}
             >
-                {renderedPosts.map((post, index) => (
+                {renderedPosts.map((post, _) => (
                     <details
                         class="entry"
                         id={post.flatSlug}
@@ -82,22 +82,4 @@ for (const post of currentPage.posts) {
             </section>
         )
     }
-
-    <script is:inline>
-        (() => {
-            function openTargetFromHash() {
-                const hash = window.location.hash.slice(1);
-                if (!hash) return;
-
-                const target = document.getElementById(hash);
-                if (!(target instanceof HTMLDetailsElement)) return;
-
-                target.open = true;
-                target.scrollIntoView({ block: "start" });
-            }
-
-            openTargetFromHash();
-            window.addEventListener("hashchange", openTargetFromHash);
-        })();
-    </script>
 </BaseLayout>
