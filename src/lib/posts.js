@@ -29,11 +29,6 @@ function parsePostSlug(slug) {
   return { author, section, entryName };
 }
 
-function postFileExists(slug) {
-  const { author, section, entryName } = parsePostSlug(slug);
-  return existsSync(join(POSTS_DIR, author, section, `${entryName}.md`));
-}
-
 function normalizeDateString(dateValue) {
   if (typeof dateValue === "string") {
     return dateValue;
@@ -83,43 +78,8 @@ function getBodyLineCount(body) {
     .filter(Boolean).length;
 }
 
-function createSnippetParagraphs(body) {
-  const cleaned = body
-    .replace(/```[\s\S]*?```/g, "")
-    .replace(/!\[[^\]]*\]\([^)]+\)/g, "")
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/`([^`]+)`/g, "$1")
-    .replace(/[*_~]/g, "");
-
-  const lines = cleaned.split(/\r?\n/).map((line) =>
-    line
-      .replace(/^>\s?/, "")
-      .replace(/^#{1,6}\s+/, "")
-      .replace(/^[-*+]\s+/, "")
-      .replace(/^\d+\.\s+/, "")
-      .trim(),
-  );
-
-  const paragraphs = [];
-  let currentParagraph = [];
-
-  for (const line of lines) {
-    if (!line) {
-      if (currentParagraph.length > 0) {
-        paragraphs.push(currentParagraph.join("\n"));
-        currentParagraph = [];
-      }
-      continue;
-    }
-
-    currentParagraph.push(line);
-  }
-
-  if (currentParagraph.length > 0) {
-    paragraphs.push(currentParagraph.join("\n"));
-  }
-
-  return paragraphs;
+function createSnippet(body) {
+  return body.replace(/!\[[^\]]*\]\([^)]+\)/g, "");
 }
 
 function getSectionOrder(sectionSlug) {
@@ -146,7 +106,7 @@ function buildPostRecord(entry) {
     date,
     dateLabel: formatDate(date),
     dateSortKey: getDateSortKey(date),
-    snippetParagraphs: createSnippetParagraphs(entry.body),
+    snippet: createSnippet(entry.body),
     bodyLineCount: getBodyLineCount(entry.body),
     authorSlug,
     authorLabel: formatLabel(author),
@@ -222,9 +182,7 @@ export async function getPosts() {
     }
   }
 
-  const posts = entries
-    .filter((entry) => postFileExists(entry.slug))
-    .map(buildPostRecord);
+  const posts = entries.map(buildPostRecord);
 
   posts.sort((left, right) => {
     return (

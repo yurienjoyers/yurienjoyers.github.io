@@ -285,20 +285,12 @@ a {
 
 .entry-preview {
     position: relative;
-    margin-top: 1.5rem;
+    margin: 1.75rem 0 0;
     max-height: 7.5rem;
     overflow: hidden;
-}
-
-.entry-preview p {
-    margin: 0;
     color: var(--muted);
-    line-height: 1.9;
+    line-height: 1.8;
     white-space: pre-line;
-}
-
-.entry-preview p + p {
-    margin-top: 1rem;
 }
 
 .entry-preview::after {
