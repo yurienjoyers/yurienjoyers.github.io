@@ -9,4 +9,5 @@ export default defineConfig({
   build: {
     format: "file",
   },
+  site: "https://yurienjoyers.github.io",
 });
