@@ -1,0 +1,103 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { findPage, getGroups, getPages, getPosts } from "../../lib/posts.js";
+
+export async function getStaticPaths() {
+    const posts = await getPosts();
+    const pages = getPages(posts);
+
+    return pages.map((page) => ({
+        params: {
+            author: page.authorSlug,
+            section: page.sectionSlug,
+        },
+    }));
+}
+
+const posts = await getPosts();
+const groups = getGroups();
+const pages = getPages(posts);
+const { author, section } = Astro.params;
+const currentPage = findPage(pages, author, section);
+
+if (!currentPage) {
+    throw new Error(`Unknown page: ${author}/${section}`);
+}
+
+const renderedPosts =
+    /** @type {Array<{ flatSlug: string; title: string; date: string; dateLabel: string; snippetParagraphs: Array<string>; bodyLineCount: number; Content: any }>} */ ([]);
+
+for (const post of currentPage.posts) {
+    const { Content } = await post.entry.render();
+
+    renderedPosts.push({
+        ...post,
+        Content,
+    });
+}
+---
+
+<BaseLayout groups={groups} activePage={currentPage.pageHref} wide>
+    {
+        renderedPosts.length === 0 ? (
+            <section
+                class="empty-state"
+                aria-label={`${currentPage.sectionLabel} posts`}
+            >
+                <p>nothing has been posted here yet!</p>
+            </section>
+        ) : (
+            <section
+                class="entries"
+                aria-label={`${currentPage.sectionLabel} posts`}
+            >
+                {renderedPosts.map((post, index) => (
+                    <details
+                        class="entry"
+                        id={post.flatSlug}
+                        open={post.bodyLineCount <= 5}
+                        data-entry
+                    >
+                        <summary class="entry-summary">
+                            <div class="entry-summary-inner">
+                                <h2 class="entry-title">{post.title}</h2>
+                                <time class="entry-date" datetime={post.date}>
+                                    {post.dateLabel}
+                                </time>
+                                <div class="entry-preview">
+                                    {post.snippetParagraphs.map(
+                                        (paragraph: string) => (
+                                            <p>{paragraph}</p>
+                                        ),
+                                    )}
+                                </div>
+                            </div>
+                        </summary>
+
+                        <article class="article entry-body">
+                            <post.Content />
+                        </article>
+                    </details>
+                ))}
+            </section>
+        )
+    }
+
+    <script is:inline>
+        (() => {
+            function openTargetFromHash() {
+                const hash = window.location.hash.slice(1);
+                if (!hash) return;
+
+                const target = document.getElementById(hash);
+                if (!(target instanceof HTMLDetailsElement)) return;
+
+                target.open = true;
+                target.scrollIntoView({ block: "start" });
+            }
+
+            openTargetFromHash();
+            window.addEventListener("hashchange", openTargetFromHash);
+        })();
+    </script>
+</BaseLayout>

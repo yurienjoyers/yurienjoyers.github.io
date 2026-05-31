@@ -1,0 +1,43 @@
+---
+import { ClientRouter } from "astro:transitions";
+import Sidebar from "../components/Sidebar.astro";
+import "../styles/global.css";
+
+const { groups, activePage, home = false, wide = false } = Astro.props;
+const documentTitle = "yurienjoyers";
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{documentTitle}</title>
+        <link rel="icon" href="/assets/logo.png" type="image/png" />
+        <ClientRouter />
+    </head>
+    <body>
+        <div class="layout">
+            <Sidebar groups={groups} activePage={activePage} />
+
+            {
+                home ? (
+                    <main class="content content--home">
+                        <slot />
+                    </main>
+                ) : (
+                    <main class="content">
+                        <div
+                            class:list={[
+                                "content-inner",
+                                { "content-inner--wide": wide },
+                            ]}
+                        >
+                            <slot />
+                        </div>
+                    </main>
+                )
+            }
+        </div>
+    </body>
+</html>

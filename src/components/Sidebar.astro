@@ -1,0 +1,41 @@
+---
+const { groups = [], activePage = "" } = Astro.props;
+const sidebarGroups = groups;
+---
+
+<aside class="sidebar" aria-label="Blog sidebar">
+    <a class="site-title" href="/index.html">
+        <img
+            class="site-icon"
+            src="/assets/logo.png"
+            alt=""
+            width="22"
+            height="22"
+            transition:persist
+        />
+        <span>yurienjoyers</span>
+    </a>
+
+    {
+        sidebarGroups.map((group) => (
+            <section class="group" aria-label={`${group.groupLabel} posts`}>
+                <p class="group-label">{group.groupLabel}</p>
+                <ul>
+                    {group.sections.map((section) => (
+                        <li>
+                            <a
+                                class:list={[
+                                    "sidebar-link",
+                                    { active: section.pageHref === activePage },
+                                ]}
+                                href={section.pageHref}
+                            >
+                                {section.sectionLabel}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </section>
+        ))
+    }
+</aside>

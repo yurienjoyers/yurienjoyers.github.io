@@ -1,0 +1,14 @@
+---
+import Carousel from "../components/Carousel.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCarouselItems } from "../lib/carousel.js";
+import { getGroups, getPosts } from "../lib/posts.js";
+
+await getPosts();
+const groups = getGroups();
+const carouselItems = getCarouselItems();
+---
+
+<BaseLayout groups={groups} home>
+    <Carousel items={carouselItems} />
+</BaseLayout>

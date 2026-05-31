@@ -1,0 +1,83 @@
+---
+const { items } = Astro.props;
+---
+
+{
+  items.length === 0 ? (
+    <section class="home-stage">
+    </section>
+  ) : (
+    <>
+      <section class="home-stage" data-carousel-root data-carousel-items={JSON.stringify(items)}>
+        <p class="source-link" data-carousel-source>{items[0].label}</p>
+        <div class="home-carousel">
+          {items.map((item, index) => (
+            <div
+              class:list={["carousel-slide", { active: index === 0 }]}
+              data-carousel-slide
+              style={`background-image: url('${item.src}');`}
+              aria-hidden="true"
+            />
+          ))}
+        </div>
+      </section>
+
+      <script is:inline>
+        (() => {
+          let cleanup = window.__homeCarouselCleanup || null;
+
+          function setupCarousel() {
+            if (cleanup) {
+              cleanup();
+              cleanup = null;
+            }
+
+            const root = document.querySelector('[data-carousel-root]');
+            if (!root) {
+              window.__homeCarouselCleanup = null;
+              return;
+            }
+
+            const items = JSON.parse(root.getAttribute('data-carousel-items') || '[]');
+            const slides = Array.from(root.querySelectorAll('[data-carousel-slide]'));
+            const sourceLabel = root.querySelector('[data-carousel-source]');
+
+            if (slides[0]) {
+              slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === 0);
+              });
+            }
+
+            if (sourceLabel && items[0]) {
+              sourceLabel.textContent = items[0].label;
+            }
+
+            if (items.length < 2 || slides.length < 2) {
+              window.__homeCarouselCleanup = null;
+              return;
+            }
+
+            let index = 0;
+
+            function applySlide(nextIndex) {
+              slides[index].classList.remove('active');
+              index = nextIndex;
+              slides[index].classList.add('active');
+              if (sourceLabel) sourceLabel.textContent = items[index].label;
+            }
+
+            const intervalId = window.setInterval(() => {
+              applySlide((index + 1) % slides.length);
+            }, 15000);
+
+            cleanup = () => window.clearInterval(intervalId);
+            window.__homeCarouselCleanup = cleanup;
+          }
+
+          setupCarousel();
+          document.addEventListener('astro:page-load', setupCarousel);
+        })();
+      </script>
+    </>
+  )
+}
