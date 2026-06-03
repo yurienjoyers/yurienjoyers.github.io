@@ -1,6 +1,6 @@
 ---
 title: look at this
-date: 2026-03-06
+date: 2026-06-03
 ---
 
 just played one of the most obnoxious cs games ever i dont like the lithuanians....
